@@ -1,24 +1,38 @@
 <template>
-  <form @submit.prevent="submitForm">
-    <div>
-      <label for="username">id: </label>
-      <input type="text" id="username" v-model="username" />
+  <div class="contents">
+    <div class="form-wrapper form-wrapper-sm">
+      <form @submit.prevent="submitForm" class="form">
+        <div>
+          <label for="username">id:</label>
+          <input
+            type="text"
+            id="username"
+            v-model="username"
+            v-bind:class="{'inp-error': username !== '' && !isUsernameValid}"
+          />
+          <p class="txt-err" v-if="username !== '' && !isUsernameValid">유효하지 않은 메일주소입니다.</p>
+        </div>
+        <div>
+          <label for="password">pw:</label>
+          <input type="text" id="password" v-model="password" />
+        </div>
+        <div>
+          <label for="nickname">nickname:</label>
+          <input type="text" id="nickname" v-model="nickname" />
+        </div>
+        <button
+          type="submit"
+          v-bind:disabled="password === '' || nickname === '' || !isUsernameValid"
+        >회원 가입</button>
+        <p class="log">{{ logMessage }}</p>
+      </form>
     </div>
-    <div>
-      <label for="password">pw: </label>
-      <input type="text" id="password" v-model="password" />
-    </div>
-    <div>
-      <label for="nickname">nickname: </label>
-      <input type="text" id="nickname" v-model="nickname" />
-    </div>
-    <button type="submit">회원 가입</button>
-    <p>{{ logMessage }}</p>
-  </form>
+  </div>
 </template>
 
 <script>
 import { registerUser } from '@/api/index.js';
+import { validateEmail } from '@/utils/validation.js';
 
 export default {
   data() {
@@ -30,6 +44,11 @@ export default {
       // log
       logMessage: '',
     };
+  },
+  computed: {
+    isUsernameValid() {
+      return validateEmail(this.username);
+    },
   },
   methods: {
     async submitForm() {
@@ -54,4 +73,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.inp-error {
+  border-color: red;
+}
+.txt-err {
+  margin: 0;
+  color: red;
+}
+</style>
