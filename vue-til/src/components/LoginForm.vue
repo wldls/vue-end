@@ -7,9 +7,7 @@
           <label for="username">id:</label>
           <input type="text" id="username" v-model="username" />
           <p class="validation-text">
-            <span class="warning" v-if="!isUsernameValid && username"
-              >Please enter an email address</span
-            >
+            <span class="warning" v-if="!isUsernameValid && username">Please enter an email address</span>
           </p>
         </div>
         <div>
@@ -17,13 +15,7 @@
           <input type="text" id="password" v-model="password" />
         </div>
         <!-- id, pw가 없으면 로그인버튼이 눌리지 않음 -->
-        <button
-          type="submit"
-          :disabled="!isUsernameValid || !password"
-          class="btn"
-        >
-          로그인
-        </button>
+        <button type="submit" :disabled="!isUsernameValid || !password" class="btn">로그인</button>
         <p v-if="logMessage" class="log">{{ logMessage }}</p>
       </form>
     </div>
@@ -59,8 +51,10 @@ export default {
         };
 
         const { data } = await loginUser(loginData);
-        console.log(data.user.username);
 
+        console.log(data.token);
+        // token 값 store에 저장
+        this.$store.commit('setToken', data.token);
         // mutations을 호출하는 api
         this.$store.commit('setUsername', data.user.username);
         // 메인 페이지로 이동
