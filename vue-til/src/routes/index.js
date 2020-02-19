@@ -13,7 +13,7 @@ export default new VueRouter({
   routes: [
     {
       path: '/',
-      redirect: '/login',
+      redirect: '/main',
     },
     {
       path: '/login',
@@ -27,6 +27,10 @@ export default new VueRouter({
     {
       path: '/main',
       component: () => import('@/views/MainPage.vue'),
+    },
+    {
+      path: '/add',
+      component: () => import('@/views/PostAddPage.vue'),
     },
     {
       // 존재하지 않는 url접근시 처리

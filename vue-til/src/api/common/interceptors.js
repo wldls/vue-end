@@ -1,3 +1,5 @@
+import store from '@/store/index';
+
 // interceptors
 // axios.interceptors.request.use() 요청을 보내기 전 코드
 // axios.interceptors.response.use() 응답을 받기 전 처리
@@ -7,6 +9,7 @@ export function setInterceptors(instance) {
   instance.interceptors.request.use(
     function(config) {
       // Do something before request is sent
+      config.headers.Authorization = store.state.token;
       return config;
     },
     function(error) {

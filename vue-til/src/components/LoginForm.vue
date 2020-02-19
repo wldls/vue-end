@@ -7,7 +7,9 @@
           <label for="username">id:</label>
           <input type="text" id="username" v-model="username" />
           <p class="validation-text">
-            <span class="warning" v-if="!isUsernameValid && username">Please enter an email address</span>
+            <span class="warning" v-if="!isUsernameValid && username"
+              >Please enter an email address</span
+            >
           </p>
         </div>
         <div>
@@ -15,7 +17,13 @@
           <input type="text" id="password" v-model="password" />
         </div>
         <!-- id, pw가 없으면 로그인버튼이 눌리지 않음 -->
-        <button type="submit" :disabled="!isUsernameValid || !password" class="btn">로그인</button>
+        <button
+          type="submit"
+          :disabled="!isUsernameValid || !password"
+          class="btn"
+        >
+          로그인
+        </button>
         <p v-if="logMessage" class="log">{{ logMessage }}</p>
       </form>
     </div>
@@ -23,7 +31,7 @@
 </template>
 
 <script>
-import { loginUser } from '@/api/index.js';
+// import { loginUser } from '@/api/index.js';
 import { validateEmail } from '@/utils/validation.js';
 
 export default {
@@ -50,16 +58,25 @@ export default {
           password: this.password,
         };
 
-        const { data } = await loginUser(loginData);
+        await this.$store.dispatch('LOGIN', loginData);
 
-        console.log(data.token);
-        // token 값 store에 저장
-        this.$store.commit('setToken', data.token);
-        // mutations을 호출하는 api
-        this.$store.commit('setUsername', data.user.username);
+        /**
+         *
+         * store index.js 에서 actions 이용
+         */
+        // const { data } = await loginUser(loginData);
+
+        // // token 값 store에 저장
+        // this.$store.commit('setToken', data.token);
+        // // mutations을 호출하는 api
+        // this.$store.commit('setUsername', data.user.username);
+
+        // // 새로고침 해도 로그인 정보를 유지할 수 있도록 쿠키에 값 저장
+        // saveAuthToCookie(data.token);
+        // saveUserToCookie(data.user.username);
+
         // 메인 페이지로 이동
         this.$router.push('/main');
-
         // this.logMessage = `${data.user.username} 님 환영합니다.`;
       } catch (error) {
         // 에러 핸들링할 코드
