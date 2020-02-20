@@ -6,7 +6,7 @@ import {
   getAuthFromCookie,
   getUserFromCookie,
 } from '@/utils/cookies.js';
-import { loginUser } from '@/api/index';
+import { loginUser } from '@/api/auth';
 
 Vue.use(Vuex);
 
@@ -32,10 +32,12 @@ export default new Vuex.Store({
     clearUsername(state) {
       // logout
       state.username = '';
-      state.token = '';
     },
     setToken(state, token) {
       state.token = token;
+    },
+    clearToken(state) {
+      state.token = '';
     },
   },
   actions: {

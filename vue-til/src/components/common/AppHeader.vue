@@ -1,7 +1,7 @@
 <template>
   <header>
     <div>
-      <router-link to="/" class="logo">TIL</router-link>
+      <router-link :to="logoLink" class="logo">TIL</router-link>
     </div>
     <div class="navigations">
       <!-- 분기처리 1 -->
@@ -19,15 +19,26 @@
 </template>
 
 <script>
+import { deleteCookie } from '@/utils/cookies';
+
 export default {
   computed: {
     isUserLogin() {
       return this.$store.getters.isLogin;
     },
+    logoLink() {
+      return this.$store.getters.isLogin ? '/main' : '/login';
+    },
   },
   methods: {
     logoutUser() {
+      // store 값 삭제
       this.$store.commit('clearUsername');
+      this.$store.commit('clearToken');
+      // cookie 값 삭제
+      deleteCookie('til_auth');
+      deleteCookie('til_user');
+      // 메인 페이지로 이동
       this.$router.push('/');
     },
   },
