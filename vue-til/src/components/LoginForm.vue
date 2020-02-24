@@ -7,9 +7,7 @@
           <label for="username">id:</label>
           <input type="text" id="username" v-model="username" />
           <p class="validation-text">
-            <span class="warning" v-if="!isUsernameValid && username"
-              >Please enter an email address</span
-            >
+            <span class="warning" v-if="!isUsernameValid && username">Please enter an email address</span>
           </p>
         </div>
         <div>
@@ -21,9 +19,8 @@
           type="submit"
           :disabled="!isUsernameValid || !password"
           class="btn"
-        >
-          로그인
-        </button>
+          :class="!isUsernameValid || !password ? 'disabled' : null"
+        >로그인</button>
         <p v-if="logMessage" class="log">{{ logMessage }}</p>
       </form>
     </div>
