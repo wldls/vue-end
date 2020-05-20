@@ -1,46 +1,30 @@
 <template>
-  <v-container
-    class="fill-height"
-    fluid
-  >
-    <v-row
-      align="center"
-      justify="center"
-    >
-      <v-col
-        cols="12"
-        sm="8"
-        md="4"
-      >
+  <v-container class="fill-height" fluid>
+    <v-alert v-if="msg" align="center" type="error" class="mx-auto">
+      {{
+      msg
+      }}
+    </v-alert>
+    <v-row align="center" justify="center">
+      <v-col cols="12" sm="8" md="4">
         <v-card class="elevation-12">
-          <v-toolbar
-            color="primary"
-            dark
-            flat
-          >
+          <v-toolbar color="primary" dark flat>
             <v-toolbar-title>Login</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
-            <v-form
-              @submit.prevent="onSubmit"
-            >
-              <v-text-field
-                label="Login"
-                name="login"
-                type="text"
-                v-model="id"
-              ></v-text-field>
+            <v-form @submit.prevent="onSubmit">
+              <v-text-field v-model="id" label="Login" name="login" type="text" />
               <v-text-field
                 id="password"
+                v-model="pw"
                 label="Password"
                 name="password"
                 type="password"
-                v-model="pw"
-              ></v-text-field>
+              />
             </v-form>
           </v-card-text>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn color="primary" @click="onSubmit">Login</v-btn>
           </v-card-actions>
         </v-card>
@@ -50,25 +34,44 @@
 </template>
 
 <script>
-import { login } from '../api/index'
+import { mapState } from 'vuex';
+const Cookie = process.client ? require("js-cookie") : undefined;
 
 export default {
-  data () {
+  data() {
     return {
-      id: '',
-      pw: ''
+      id: "",
+      pw: "",
+      msg: "",
+    };
+  },
+  computed: {
+    ...mapState(['logged']),
+  },
+  created(){    
+    if(this.$store.state.logged){
+      this.$router.go(-1);
     }
   },
   methods: {
-    async onSubmit () {
+    async onSubmit() {
+      const loginData = { username: this.id, password: this.pw };
       try {
-        const res = await login()
+        const { data } = await this.$api.post("/login", loginData);
 
-        console.log(res.data.message, res.data.token)
+        await this.$store.commit("login", data.token);
+        await Cookie.set("token", data.token);
+        await this.$api.setToken(data.token);
+
+        this.$router.push("/");
       } catch (err) {
-        console.log(err)
+        this.msg = err.response.data;
       }
-    }
-  }
-}
+    },
+  },
+  head: {
+    title: "new Title",
+    meta: [{ hid: "login", name: "login", content: "Home page login" }],
+  },
+};
 </script>
