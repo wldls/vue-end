@@ -4,6 +4,8 @@ const cookieparser = process.server ? require("cookieparser") : undefined;
 export const state = () => ({
   logged: false,
   token: "",
+  skeleton: null,
+  pageLoading: false,
 });
 
 export const mutations = {
@@ -14,6 +16,12 @@ export const mutations = {
   logout(state) {
     state.logged = false;
     state.token = "";
+  },
+  updateSkeleton(state, payload) {
+    state.skeleton = payload;
+  },
+  updateLoading(state, payload) {
+    state.pageLoading = payload;
   },
 };
 

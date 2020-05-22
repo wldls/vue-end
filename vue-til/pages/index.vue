@@ -1,16 +1,16 @@
 <template>
   <v-container fluid>
-    <v-row dense>
-      <v-col v-for="list in lists" :key="list._id">
-        <v-card class="mx-auto" max-width="500" outlined>
+    <SkeletonLoader v-if="pageLoading"></SkeletonLoader>
+    <!-- <SkeletonLoader v-if="$fetchState.pending"></SkeletonLoader> -->
+    <v-row v-else dense>
+      <v-col v-for="list in lists" :key="list._id" cols="6" md="4">
+        <v-card class="mx-auto" max-width="600" outlined>
           <v-list-item three-line>
             <v-list-item-content>
               <div class="overline mb-4">{{ list.createdAt }}</div>
-              <v-list-item-title class="headline mb-1">
-                {{
+              <v-list-item-title class="headline mb-1">{{
                 list.title
-                }}
-              </v-list-item-title>
+              }}</v-list-item-title>
               <v-list-item-subtitle>{{ list.contents }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -30,12 +30,36 @@
 </template>
 
 <script>
+import SkeletonLoader from "../components/SkeletonLoader";
+
 export default {
-  middleware: "auth",
-  async asyncData({ app, req }) {
+  middleware: ["auth", "skeleton"],
+  components: { SkeletonLoader },
+  async fetch({ app }) {
+    // this.updateLoading(true);
+
     const { data } = await app.$api.get("/posts");
 
-    return { lists: data.posts };
+    // console.log(data);
+
+    console.log(this);
+
+    this.lists = data.posts;
+
+    // return { lists: data.posts };
+
+    // this.updateLoading(false);
+  },
+  fetchOnServer: false,
+  data() {
+    return {
+      lists: [],
+    };
+  },
+  computed: {
+    pageLoading() {
+      return this.$store.state.pageLoading;
+    },
   },
 };
 </script>

@@ -1,10 +1,8 @@
 <template>
   <v-container class="fill-height" fluid>
-    <v-alert v-if="msg" align="center" type="error" class="mx-auto">
-      {{
+    <v-alert v-if="msg" align="center" type="error" class="mx-auto">{{
       msg
-      }}
-    </v-alert>
+    }}</v-alert>
     <v-row align="center" justify="center">
       <v-col cols="12" sm="8" md="4">
         <v-card class="elevation-12">
@@ -13,12 +11,19 @@
           </v-toolbar>
           <v-card-text>
             <v-form @submit.prevent="onSubmit">
-              <v-text-field v-model="id" label="Login" name="login" type="text" />
+              <v-text-field
+                v-model="id"
+                label="Login"
+                name="login"
+                :rules="rules"
+                type="text"
+              />
               <v-text-field
                 id="password"
                 v-model="pw"
                 label="Password"
                 name="password"
+                :rules="rules"
                 type="password"
               />
             </v-form>
@@ -34,7 +39,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from "vuex";
 const Cookie = process.client ? require("js-cookie") : undefined;
 
 export default {
@@ -43,13 +48,14 @@ export default {
       id: "",
       pw: "",
       msg: "",
+      rules: [(value) => !!value || "Required."],
     };
   },
   computed: {
-    ...mapState(['logged']),
+    ...mapState(["logged"]),
   },
-  created(){    
-    if(this.$store.state.logged){
+  created() {
+    if (this.$store.state.logged) {
       this.$router.go(-1);
     }
   },
