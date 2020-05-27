@@ -5,7 +5,7 @@ export const state = () => ({
   logged: false,
   token: "",
   skeleton: null,
-  pageLoading: false,
+  postList: [],
 });
 
 export const mutations = {
@@ -20,8 +20,8 @@ export const mutations = {
   updateSkeleton(state, payload) {
     state.skeleton = payload;
   },
-  updateLoading(state, payload) {
-    state.pageLoading = payload;
+  loadPostList(state, payload) {
+    state.postList = payload;
   },
 };
 

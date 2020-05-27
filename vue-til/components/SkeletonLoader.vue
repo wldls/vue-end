@@ -3,13 +3,7 @@
     <v-sheet color="grey lighten-4" class="px-3 pt-3 pb-3">
       <v-container>
         <v-row>
-          <v-col cols="12" md="4">
-            <VBoilerplate class="mb-6" type="article, actions"></VBoilerplate>
-          </v-col>
-          <v-col cols="12" md="4">
-            <VBoilerplate class="mb-6" type="article, actions"></VBoilerplate>
-          </v-col>
-          <v-col cols="12" md="4">
+          <v-col v-for="n in 10" :key="n" cols="12" md="4" sm="6">
             <VBoilerplate class="mb-6" type="article, actions"></VBoilerplate>
           </v-col>
         </v-row>
@@ -46,9 +40,6 @@ export default {
     skeleton() {
       return this.$store.state.skeleton;
     },
-    // pageLoading(){
-    //   return this.$store.state.pageLoading;
-    // }
   },
 };
 </script>

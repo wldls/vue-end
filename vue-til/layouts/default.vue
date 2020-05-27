@@ -37,6 +37,9 @@
       </v-btn>-->
       <v-toolbar-title v-text="title" />
       <v-spacer />
+      <v-btn icon to="/write">
+        <v-icon>mdi-plus</v-icon>
+      </v-btn>
       <v-btn icon to="/">
         <v-icon>mdi-home</v-icon>
       </v-btn>
@@ -91,7 +94,7 @@ export default {
         {
           icon: "mdi-chart-bubble",
           title: "Create Todo",
-          to: "/create",
+          to: "/write",
         },
       ],
       miniVariant: false,

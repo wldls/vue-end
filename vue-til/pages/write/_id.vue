@@ -28,42 +28,49 @@
           @blur="$v.contents.$touch()"
         />
         <div class="float-right">
-          <v-btn outlined color="primary" @click.stop="dialogCancel = true"
-            >cancel</v-btn
-          >
+          <v-btn outlined color="primary" @click.stop="showModal">cancel</v-btn>
           <v-btn type="submit" depressed color="primary">confirm</v-btn>
         </div>
       </v-container>
     </v-form>
-    <v-dialog v-model="dialogCancel" width="500">
-      <v-card>
-        <v-card-title class="headline">Warning</v-card-title>
-        <v-card-text class="mt-5">글 작성을 취소하시겠습니까?</v-card-text>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="dialogCancel = false">취소</v-btn>
-          <v-btn color="primary" text @click="onCancelWrite">확인</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <CreateModal
+      :dialog-cancel="dialogCancel"
+      @hideModal="hideModal"
+      @cancelWrite="cancelWrite"
+    ></CreateModal>
   </div>
 </template>
+
 <script>
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
+import CreateModal from "../../components/create/CreateModal";
 
 export default {
   middleware: "auth",
+  components: { CreateModal },
   mixins: [validationMixin],
+  async fetch() {
+    try {
+      const id = this.$route.params.id;
+      if (!id) return false;
+
+      const { data } = await this.$api.get(`/posts/${id}`);
+
+      this.isModify = true;
+      this.title = data.title;
+      this.contents = data.contents;
+    } catch (err) {
+      this.msg = err.response.data.message;
+    }
+  },
   data() {
     return {
       msg: "",
       title: "",
       contents: "",
-      loading: false,
       dialogCancel: false,
-      dialogSubmit: false,
+      isModify: false,
     };
   },
   computed: {
@@ -86,29 +93,47 @@ export default {
     contents: { required },
   },
   methods: {
+    showModal() {
+      this.dialogCancel = true;
+    },
+    hideModal() {
+      this.dialogCancel = false;
+    },
+    cancelWrite() {
+      this.hideModal();
+      this.$router.push("/");
+    },
+    onReset() {
+      this.title = "";
+      this.contents = "";
+      this.$router.push("/");
+    },
     async onSubmit() {
       this.$v.$touch();
       this.$nuxt.$loading.start();
 
       if (this.$v.$invalid) return false;
 
-      const createdData = { title: this.title, contents: this.contents };
-
       try {
-        const res = await this.$api.post("/posts", createdData);
-
-        if (res.status === 201) {
-          this.$nuxt.$loading.finish();
-          this.$router.push("/");
+        const createdData = { title: this.title, contents: this.contents };
+        let res;
+        if (!this.isModify) {
+          res = await this.$api.post("/posts", createdData);
+        } else {
+          res = await this.$api.put(
+            `/posts/${this.$route.params.id}`,
+            createdData,
+          );
         }
+
+        this.$nuxt.$loading.finish();
+        this.onReset();
       } catch (err) {
         this.msg = err.response.data.message;
       }
     },
-    onCancelWrite() {
-      this.dialogCancel = false;
-      this.$router.push("/");
-    },
   },
 };
 </script>
+
+<style></style>
